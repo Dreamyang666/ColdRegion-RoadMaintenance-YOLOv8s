@@ -1,0 +1,76 @@
+# ============================================
+# 高寒地区道路智能养护系统 - 配置文件
+# 基于 YOLOv8-s
+# ============================================
+
+# 模型配置
+model:
+  name: "yolov8s"
+  weights: "weights/yolov8s.pt"
+  imgsz: 640
+  conf: 0.25
+  iou: 0.45
+  device: "cpu"  # 可选: cpu, 0, 0,1
+
+# 病害类别 (路面常见病害)
+classes:
+  - "纵向裂缝"
+  - "横向裂缝"
+  - "块状裂缝"
+  - "坑槽"
+  - "松散"
+  - "沉陷"
+  - "泛油"
+  - "修补"
+
+# 高寒地区特殊病害
+cold_region_classes:
+  - "冻融裂缝"
+  - "冰冻隆起"
+  - "冻胀坑槽"
+  - "冰雪覆盖"
+  - "盐冻剥蚀"
+
+# 检测参数
+detection:
+  imgsz: 640
+  conf_threshold: 0.25
+  iou_threshold: 0.45
+  max_det: 50
+  augment: true
+
+# 养护决策阈值
+maintenance:
+  severity_levels:
+    minor:
+      crack_width: 3.0      # mm
+      area_ratio: 0.05       # 5%
+    moderate:
+      crack_width: 6.0      # mm
+      area_ratio: 0.15      # 15%
+    severe:
+      crack_width: 12.0     # mm
+      area_ratio: 0.30       # 30%
+  
+  # 高寒地区温度阈值
+  temperature:
+    freeze_threshold: -5      # 结冰温度 ℃
+    severe_cold: -20          # 严寒温度 ℃
+    construction_min: 5       # 施工最低温度 ℃
+
+# Web 服务配置
+server:
+  host: "0.0.0.0"
+  port: 5000
+  debug: true
+
+# 数据集路径
+dataset:
+  train: "data/datasets/train/images"
+  val: "data/datasets/val/images"
+  test: "data/datasets/test/images"
+
+# 日志配置
+logging:
+  level: "INFO"
+  file: "logs/system.log"
