@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- 系统介绍 -->
+<div class="hero">
+    <div class="hero-text">
+        <h2>路面病害智能检测 + 高寒养护决策</h2>
+        <p>本系统采用 YOLOv8-s 目标检测算法，对高寒地区路面病害进行自动识别，结合冻融循环、低温环境和除冰盐影响，生成智能化养护方案。</p>
+        <div class="hero-tags">
+            <span class="tag">YOLOv8-s</span>
+            <span class="tag">冻融分析</span>
+            <span class="tag">养护决策</span>
+            <span class="tag">成本估算</span>
+        </div>
+    </div>
+</div>
+
+<!-- 上传检测区 -->
+<div class="section">
+    <h3>📷 路面病害检测</h3>
+    <div class="upload-area" id="uploadArea">
+        <div class="upload-box">
+            <div class="upload-icon">📁</div>
+            <p>点击或拖拽上传路面图片</p>
+            <p class="upload-hint">支持 JPG / PNG / BMP 格式</p>
+            <input type="file" id="fileInput" accept="image/*" style="display:none;">
+        </div>
+    </div>
+
+    <!-- 高寒环境参数 -->
+    <div class="env-params">
+        <h4>🌨️ 高寒地区环境参数</h4>
+        <div class="params-grid">
+            <div class="param-item">
+                <label>当前温度 (℃)</label>
+                <input type="number" id="temperature" value="-15" step="0.5">
+            </div>
+            <div class="param-item">
+                <label>湿度 (%)</label>
+                <input type="number" id="humidity" value="65" step="1">
+            </div>
+            <div class="param-item">
+                <label>冻融循环次数</label>
+                <input type="number" id="freeze_thaw_cycles" value="80" step="1">
+            </div>
+            <div class="param-item">
+                <label>冰层厚度 (mm)</label>
+                <input type="number" id="ice_thickness" value="0" step="0.5">
+            </div>
+            <div class="param-item">
+                <label>道路使用年限</label>
+                <input type="number" id="road_age" value="5" step="1">
+            </div>
+            <div class="param-item">
+                <label>年均冻结天数</label>
+                <input type="number" id="avg_freeze_days" value="150" step="1">
+            </div>
+            <div class="param-item">
+                <label>冻土深度 (m)</label>
+                <input type="number" id="permafrost_depth" value="0" step="0.1">
+            </div>
+            <div class="param-item">
+                <label>除冰盐用量 (kg/m²)</label>
+                <input type="number" id="salt_usage" value="0" step="0.1">
+            </div>
+            <div class="param-item">
+                <label>路段名称</label>
+                <input type="text" id="road_section" value="G214线K100+200段" style="width:100%;">
+            </div>
+        </div>
+    </div>
+
+    <button class="btn-detect" id="btnDetect" disabled>开始检测</button>
+</div>
+
+<!-- 加载中 -->
+<div class="loading" id="loading" style="display:none;">
+    <div class="spinner"></div>
+    <p>正在检测并生成养护方案...</p>
+</div>
+
+<!-- 检测结果 -->
+<div id="resultSection" style="display:none;">
+
+    <!-- 检测摘要 -->
+    <div class="section">
+        <h3>📊 检测摘要</h3>
+        <div class="summary-grid" id="summaryGrid"></div>
+    </div>
+
+    <!-- 结果图片 -->
+    <div class="section">
+        <h3>🖼️ 检测结果图</h3>
+        <div class="result-image-container">
+            <img id="resultImage" src="" alt="检测结果" style="max-width:100%;">
+        </div>
+    </div>
+
+    <!-- 病害详情列表 -->
+    <div class="section">
+        <h3>📋 病害详情列表</h3>
+        <div class="table-container">
+            <table class="disease-table" id="diseaseTable">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>病害类型</th>
+                        <th>置信度</th>
+                        <th>面积占比</th>
+                        <th>位置坐标</th>
+                    </tr>
+                </thead>
+                <tbody id="diseaseTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 高寒风险评估 -->
+    <div class="section">
+        <h3>🌡️ 高寒地区风险评估</h3>
+        <div class="risk-grid" id="riskGrid"></div>
+    </div>
+
+    <!-- 养护方案 -->
+    <div class="section">
+        <h3>🔧 智能养护方案</h3>
+        <div class="plan-summary" id="planSummary"></div>
+
+        <div class="table-container">
+            <table class="maintenance-table" id="maintenanceTable">
+                <thead>
+                    <tr>
+                        <th>任务ID</th>
+                        <th>病害类型</th>
+                        <th>严重程度</th>
+                        <th>面积(m²)</th>
+                        <th>养护方法</th>
+                        <th>优先级</th>
+                        <th>预估成本(元)</th>
+                        <th>工期(天)</th>
+                        <th>高寒注意事项</th>
+                    </tr>
+                </thead>
+                <tbody id="maintenanceTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 养护建议 -->
+    <div class="section">
+        <h3>💡 养护建议</h3>
+        <div class="recommendations" id="recommendations"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% endblock %}
